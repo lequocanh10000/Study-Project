@@ -4,6 +4,9 @@ import { Class, Student, StudentClass } from 'src/models';
 import { CreateStudentDto, StudentClassDto } from './dto/create-student.dto';
 import { UpdateStudentDto } from './dto/update-student.dto';
 import { Sequelize } from 'sequelize-typescript';
+import { FilterStudentDto } from './dto/filter-student.dto';
+import { Op } from 'sequelize';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class StudentService {
@@ -11,7 +14,8 @@ export class StudentService {
         @InjectModel(Student) private readonly studentModel: typeof Student,
         @InjectModel(StudentClass) private readonly studentClassModel: typeof StudentClass, 
         @InjectModel(Class) private readonly classModel: typeof Class,
-        private readonly sequelize: Sequelize
+        private readonly sequelize: Sequelize,
+        private readonly configService: ConfigService
     ) {}
 
     async createStudent(createStudentDto: CreateStudentDto) {
@@ -56,11 +60,55 @@ export class StudentService {
         }
     }
 
-    async findAll() {
-        return await this.studentModel.findAll({
-            order: [['fullName', 'ASC']],
-            attributes: { exclude: ['createdAt', 'updatedAt']}
+    async findAll(filterStudentDto: FilterStudentDto) {
+        const {
+            search,
+            classId,
+            page,
+            limit,
+            sortBy,
+            sortOrder
+        } = filterStudentDto;
+
+        const whereClause: any = {};
+
+        if(search != undefined) {
+            whereClause[Op.or] = [
+                {fullName: {[Op.like]: `%${search}%`}},
+            ];
+        }
+
+        if(classId !== undefined) whereClause.classId = classId;
+
+        const limitPage = Number(limit || this.configService.get<number>('LIMIT_STUDENT'));
+        const currentPage = Number(page || 1);
+        const offset = (currentPage - 1) * limitPage;
+
+        let orderClause: any[] = [];
+        if(sortBy && sortOrder) {
+            orderClause = [[sortBy, sortOrder]];
+        } else {
+            orderClause = [[this.sequelize.literal("SUBSTRING_INDEX(fullName, ' ', -1)"), "ASC"]];
+        }
+
+        const {rows, count} = await this.studentModel.findAndCountAll({
+            where: whereClause,
+            order: orderClause,
+            limit: limitPage,
+            offset,
+            raw: true,
         });
+        const totalItems = Array.isArray(count) ? count.length : count;
+
+        return {
+            items: rows,
+            paginationMeta: {
+                totalItems,
+                currentPage,
+                limit: limitPage,
+                totalPages: Math.ceil(totalItems / limitPage),
+            }
+        };
     }
 
     async findOne(id: number) {
