@@ -12,6 +12,7 @@ export class Document extends Model<Document> {
     @Column({
         allowNull: false,
         type: DataType.STRING,
+        unique: true,
     })
     link: string;
 
