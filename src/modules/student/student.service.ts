@@ -113,8 +113,23 @@ export class StudentService {
 
     async findOne(id: number) {
         return await this.studentModel.findOne({
-            where: {id: id},
-            attributes: { exclude: ['createdAt', 'updatedAt']}
+            include: [
+                {
+                    model: StudentClass,
+                    attributes: {
+                        exclude: ['createdAt', 'updatedAt', 'id', 'studentId'],
+                    },
+                    where: {
+                        isExpelled: false,
+                    }
+                },
+            ],
+            attributes: {
+                exclude: ['createdAt', 'updatedAt']
+            },
+            where: {
+                id 
+            }
         });
     }
 
