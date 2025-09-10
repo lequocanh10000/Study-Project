@@ -11,6 +11,7 @@ import { TeacherModule } from './modules/teacher/teacher.module';
 import { SeedModule } from './modules/seed/seed.module';
 import { CourseModule } from './modules/course/course.module';
 import { ClassModule } from './modules/class/class.module';
+import { DocumentModule } from './modules/document/document.module';
 
 @Module({
   imports: [
@@ -36,7 +37,8 @@ import { ClassModule } from './modules/class/class.module';
     TeacherModule,
     SeedModule,
     CourseModule,
-    ClassModule
+    ClassModule,
+    DocumentModule
   ],
 })
 export class AppModule implements NestModule{
