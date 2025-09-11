@@ -1,6 +1,8 @@
-import { Body, Controller, Param, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Param, Patch, Post, UseGuards } from '@nestjs/common';
 import { TeacherService } from './teacher.service';
 import { CreateTeacherDto } from './dto/create-teacher.dto';
+import { CurrentInfo } from 'src/common/decorators';
+import { JwtGuard } from '../auth/guards/jwt.guard';
 
 @Controller('teacher')
 export class TeacherController {
@@ -12,7 +14,11 @@ export class TeacherController {
   }
 
   @Patch('password/:id')
-  async changePassword(@Body() changePasswordDto, @Param('id') teacherId: number) {
-    return await this.teacherService.changePassword(changePasswordDto, teacherId);
+  @UseGuards(JwtGuard) 
+  async changePassword(
+    @Body() changePasswordDto, 
+    @Param('id') teacherId: number,
+    @CurrentInfo() account) {
+    return await this.teacherService.changePassword(changePasswordDto, teacherId, account);
   }
 }

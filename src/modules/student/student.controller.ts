@@ -5,6 +5,7 @@ import { UpdateStudentDto } from './dto/update-student.dto';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { JwtGuard } from '../auth/guards/jwt.guard';
 import { FilterStudentDto } from './dto/filter-student.dto';
+import { RoleGuard } from '../auth/guards/role.guard';
 
 @ApiTags('Học sinh')
 @Controller('student')
@@ -25,6 +26,7 @@ export class StudentController {
     return await this.studentService.createStudent(createStudentDto);
   }
 
+  @UseGuards(new RoleGuard(['admin']))
   @UseGuards(JwtGuard)
   @Get('all')
   async getAllStudents(@Query() filterstudentDto: FilterStudentDto ) {
