@@ -38,12 +38,13 @@ export class TeacherService {
         }
     }
 
-    async changePassword(changePasswordDto: ChangePasswordDto, teacherId: number) {
+    async changePassword(changePasswordDto: ChangePasswordDto, teacherId: number, account) {
         const alreadyExists = await this.teacherModel.findByPk(teacherId);
         if(!alreadyExists) throw new BadRequestException('Không tìm thấy giáo viên');
         if(changePasswordDto.password !== changePasswordDto.confirmPassword) {
             throw new BadRequestException('Mật khẩu xác nhận không khớp');
         }
+        Helper.checkPermission(teacherId, account)
         const updated = await this.teacherModel.update(
             { password: changePasswordDto.password },
             { where: { id: teacherId } }
@@ -67,6 +68,7 @@ export class TeacherService {
         }
         return {
             id: teacher.id,
+            email: email,
             role: 'teacher'
         };
     }

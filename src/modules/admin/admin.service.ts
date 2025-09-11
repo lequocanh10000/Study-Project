@@ -28,6 +28,7 @@ export class AdminService {
         }
         return {
             id: admin.id,
+            email: email,
             role: 'admin'
         };
     }
