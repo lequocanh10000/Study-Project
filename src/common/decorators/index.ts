@@ -1,4 +1,4 @@
-import { applyDecorators } from "@nestjs/common";
+import { applyDecorators, createParamDecorator, ExecutionContext } from "@nestjs/common";
 import { ApiProperty } from "@nestjs/swagger";
 import { Type } from "class-transformer";
 import { IsArray, IsBoolean, IsDate, IsEnum, IsNotEmpty, IsNumber, IsOptional, IsString, Max, Min, ValidateNested } from "class-validator";
@@ -63,3 +63,10 @@ export const DateNotRequired = () => applyDecorators(
     IsDate(),
     IsOptional()
 )
+
+export const CurrentInfo =  createParamDecorator(
+    (data: unknown, ctx: ExecutionContext) => {
+        const request = ctx.switchToHttp().getRequest();
+        return request.user;
+    }
+) 
