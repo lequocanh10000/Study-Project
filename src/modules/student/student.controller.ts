@@ -33,16 +33,22 @@ export class StudentController {
     return await this.studentService.findAll(filterstudentDto);
   }
 
+  @UseGuards(new RoleGuard(['admin']))
+  @UseGuards(JwtGuard)
   @Get('one/:id')
   async getStudentById(@Param('id') id: number) {
     return await this.studentService.findOne(id);
   }
 
+  @UseGuards(new RoleGuard(['admin']))
+  @UseGuards(JwtGuard)
   @Patch('update/:id')
   async update(@Body() updateStudentDto: UpdateStudentDto, @Param('id') id: number) {
     return this.studentService.update(updateStudentDto, id);
   }
 
+  @UseGuards(new RoleGuard(['admin']))
+  @UseGuards(JwtGuard)
   @Delete('delete/:id')
   async delete(@Param('id') id: number) {
     return this.studentService.delete(id);

@@ -3,7 +3,7 @@ import { CreateClassDto } from './dto/create-class.dto';
 import { Sequelize } from 'sequelize-typescript';
 import { CourseService } from '../course/course.service';
 import { InjectModel } from '@nestjs/sequelize';
-import { Class, Course, StudentClass } from 'src/models';
+import { Class, Course, StudentClass, TeacherClass } from 'src/models';
 import { FilterClassDto } from './dto/filter-class.dto';
 import { Op, where } from 'sequelize';
 import { ConfigService } from '@nestjs/config';
@@ -17,7 +17,18 @@ export class ClassService {
         @InjectModel(Class) private readonly classModel: typeof Class,
     ) {}
 
-    async findOne(id: number){
+    async findOne(id: number, account){
+        if (account.role === 'teacher') {
+        const teacherClass = await TeacherClass.findOne({
+            where: {
+                classId: id,
+                teacherId: account.id
+            }
+        });
+        if (!teacherClass) {
+            throw new BadRequestException('Bạn không có quyền xem lớp này');
+        }
+    }
         return this.classModel.findOne({
             include: [
                 { 

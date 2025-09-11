@@ -1,7 +1,10 @@
-import { Body, Controller, Delete, Get, Param, Post, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Query, UseGuards } from '@nestjs/common';
 import { ClassService } from './class.service';
 import { CreateClassDto } from './dto/create-class.dto';
 import { FilterClassDto } from './dto/filter-class.dto';
+import { CurrentInfo } from 'src/common/decorators';
+import { RoleGuard } from '../auth/guards/role.guard';
+import { JwtGuard } from '../auth/guards/jwt.guard';
 
 @Controller('class')
 export class ClassController {
@@ -12,9 +15,12 @@ export class ClassController {
     return await this.classService.create(createClassDto);
   }
 
+  @UseGuards(new RoleGuard(['admin', 'teacher']))
+  @UseGuards(JwtGuard)
   @Get('one/:id')
-  async findOne(@Param('id') id: number) {
-    return await this.classService.findOne(id);
+  async findOne(@Param('id') id: number, @CurrentInfo() account) {
+    console.log(account);
+    return await this.classService.findOne(id, account);
   }
 
   @Get('all')
