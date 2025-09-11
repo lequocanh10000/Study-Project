@@ -1,3 +1,5 @@
+import { BadRequestException } from "@nestjs/common";
+
 export class Helper {
   static formatDates = (obj: any): any => {
     if(obj === null || obj === undefined) {
@@ -30,6 +32,12 @@ export class Helper {
       result += characters.charAt(Math.floor(Math.random() * charactersLength));
     }
     return result;
+  }
+
+  static checkPermission(id: number, account: any) {
+    if(id === account.id) return;
+    if(account.role === 'admin') return;
+    throw new BadRequestException('Bạn không thực hiện được hành động này');
   }
 }
 
