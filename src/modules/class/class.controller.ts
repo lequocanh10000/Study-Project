@@ -23,16 +23,22 @@ export class ClassController {
     return await this.classService.findOne(id, account);
   }
 
+  @UseGuards(new RoleGuard(['admin']))
+  @UseGuards(JwtGuard)
   @Get('all')
   async findAll(@Query() filterClassDto: FilterClassDto) {
     return this.classService.findAll(filterClassDto);
   }
 
+  @UseGuards(new RoleGuard(['admin', 'teacher']))
+  @UseGuards(JwtGuard)
   @Delete('soft/:id')
-  async removeSoft(@Param('id') id: number) {
-    return this.classService.removeSoft(id);
+  async removeSoft(@Param('id') id: number, @CurrentInfo() account) {
+    return this.classService.removeSoft(id, account);
   }
 
+  @UseGuards(new RoleGuard(['admin']))
+  @UseGuards(JwtGuard)
   @Delete('hard/:id')
   async removeHard(@Param('id') id: number) {
     return this.classService.removeHard(id);

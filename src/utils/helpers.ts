@@ -33,12 +33,6 @@ export class Helper {
     }
     return result;
   }
-
-  static checkPermission(id: number, account: any) {
-    if(id === account.id) return;
-    if(account.role === 'admin') return;
-    throw new BadRequestException('Bạn không thực hiện được hành động này');
-  }
 }
 
 export default Helper;

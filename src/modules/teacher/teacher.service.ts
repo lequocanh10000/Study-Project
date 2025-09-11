@@ -12,6 +12,12 @@ export class TeacherService {
         @InjectModel(Teacher) private readonly teacherModel: typeof Teacher,
     ) {}
 
+    private checkPermission(teacherId: number, account) {
+        if(teacherId === account.id) return;
+        if(account.role === 'admin') return;
+        throw new BadRequestException('Bạn không thực hiện được hành động này');
+    }
+
     async findByEmailOrPhone(email: string, phone: string) {
         return await this.teacherModel.findOne({ where: { email}}) || 
             await this.teacherModel.findOne({ where: { phone }});
@@ -44,7 +50,7 @@ export class TeacherService {
         if(changePasswordDto.password !== changePasswordDto.confirmPassword) {
             throw new BadRequestException('Mật khẩu xác nhận không khớp');
         }
-        Helper.checkPermission(teacherId, account)
+        this.checkPermission(teacherId, account)
         const updated = await this.teacherModel.update(
             { password: changePasswordDto.password },
             { where: { id: teacherId } }

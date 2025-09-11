@@ -1,11 +1,11 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, Injectable } from '@nestjs/common';
 import { CreateClassDto } from './dto/create-class.dto';
 import { Sequelize } from 'sequelize-typescript';
 import { CourseService } from '../course/course.service';
 import { InjectModel } from '@nestjs/sequelize';
 import { Class, Course, StudentClass, TeacherClass } from 'src/models';
 import { FilterClassDto } from './dto/filter-class.dto';
-import { Op, where } from 'sequelize';
+import { Op } from 'sequelize';
 import { ConfigService } from '@nestjs/config';
 
 @Injectable()
@@ -15,20 +15,25 @@ export class ClassService {
         private readonly configService: ConfigService,
         private readonly courseService: CourseService,
         @InjectModel(Class) private readonly classModel: typeof Class,
+        @InjectModel(TeacherClass) private readonly teacherClassModel: typeof TeacherClass,
     ) {}
 
-    async findOne(id: number, account){
-        if (account.role === 'teacher') {
-        const teacherClass = await TeacherClass.findOne({
-            where: {
-                classId: id,
-                teacherId: account.id
+    private async checkPermission(id: number, account) {
+        if(account.role === 'teacher') {
+            const teacherClass = await this.teacherClassModel.findOne({
+                where: {
+                    classId: id,
+                    teacherId: account.id
+                }
+            });
+            if(!teacherClass) {
+                throw new ForbiddenException('Bạn không thể thao tác với lớp này');
             }
-        });
-        if (!teacherClass) {
-            throw new BadRequestException('Bạn không có quyền xem lớp này');
         }
     }
+
+    async findOne(id: number, account){
+        await this.checkPermission(id, account)
         return this.classModel.findOne({
             include: [
                 { 
@@ -141,7 +146,8 @@ export class ClassService {
         return { message: 'Xóa lớp thành công'};
     }
 
-    async removeSoft(id: number) {
+    async removeSoft(id: number, account) {
+        await this.checkPermission(id, account);
         await this.classModel.update(
             { isOpened: false },
             { where: { id}}

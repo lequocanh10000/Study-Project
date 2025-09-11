@@ -1,4 +1,4 @@
-import { CanActivate, ExecutionContext, Injectable } from "@nestjs/common";
+import { CanActivate, ExecutionContext, Injectable, ForbiddenException } from "@nestjs/common";
 import { Observable } from "rxjs";
 
 @Injectable()
@@ -8,6 +8,8 @@ export class RoleGuard implements CanActivate {
         context: ExecutionContext
     ): boolean | Promise<boolean> | Observable<boolean> {
         const request = context.switchToHttp().getRequest();
-        return this.roles.includes(request.user.role);
+        const accept =  this.roles.includes(request.user.role);
+        if(!accept) throw new ForbiddenException('Bạn không có quyền truy cập');
+        return accept;
     }
 }
