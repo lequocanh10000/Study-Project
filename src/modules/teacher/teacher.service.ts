@@ -1,15 +1,21 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
-import { Teacher } from 'src/models';
+import { Teacher, TeacherClass } from 'src/models';
 import { CreateTeacherDto } from './dto/create-teacher.dto';
 import Helper from 'src/utils/helpers';
 import { ChangePasswordDto } from './dto/change-password.dto';
+import { FilterTeacherDto } from './dto/filter-teacher.dto';
+import { Sequelize } from 'sequelize-typescript';
+import { Op } from 'sequelize';
+import { ConfigService } from '@nestjs/config';
 
 
 @Injectable()
 export class TeacherService {
     constructor(
         @InjectModel(Teacher) private readonly teacherModel: typeof Teacher,
+        private readonly sequelize: Sequelize,
+        private readonly configService: ConfigService,
     ) {}
 
     private checkPermission(teacherId: number, account) {
@@ -77,5 +83,92 @@ export class TeacherService {
             email: email,
             role: 'teacher'
         };
+    }
+
+    async findOne(teacherId: number, account) {
+        this.checkPermission(teacherId, account);
+        return await this.teacherModel.findOne({
+            include: [
+                {
+                    model: TeacherClass,
+                    attributes: {
+                        exclude: ['createdAt', 'updatedAt', 'id', 'teacherId'],
+                    }
+                }
+            ],
+            attributes: {
+                exclude: ['createdAt', 'updatedAt', 'password']
+            },
+            where: {
+                id: teacherId
+            }
+        });
+    }
+
+    async findAll(filterTeacherDto: FilterTeacherDto) {
+        const {
+            search,
+            classId,
+            page,
+            limit,
+            sortBy,
+            sortOrder,
+            minExpYear,
+            maxExpYear,
+        } = filterTeacherDto;
+
+        const whereClause: any = {};
+
+        if(search != undefined) {
+            whereClause[Op.or] = [
+                {fullName: {[Op.like]: `%${search}%`}},
+            ];
+        }
+
+        if(classId !== undefined) whereClause.classId = classId;
+
+        const limitPage = Number(limit || this.configService.get<number>('LIMIT_TEACHER'));
+        const currentPage = Number(page || 1);
+        const offset = (currentPage - 1) * limitPage;
+
+        if(minExpYear !== undefined || maxExpYear !== undefined) {
+            whereClause.expYear = {}
+            if(minExpYear !== undefined) whereClause.expYear[Op.gte] = minExpYear;
+            if(maxExpYear !== undefined) whereClause.expYear[Op.lte] = maxExpYear;
+        }
+
+        let orderClause: any[] = [];
+        if(sortBy && sortOrder) {
+            orderClause = [[sortBy, sortOrder]];
+        } else {
+            orderClause = [[this.sequelize.literal("SUBSTRING_INDEX(fullName, ' ', -1)"), "ASC"]];
+        }
+
+        const {rows, count} = await this.teacherModel.findAndCountAll({
+            where: whereClause,
+            order: orderClause,
+            limit: limitPage,
+            offset,
+            raw: true
+        });
+        const totalItems = Array.isArray(count) ? count.length : count;
+        
+        return {
+            items: rows,
+            paginationMeta: {
+                totalItems,
+                currentPage,
+                limit: limitPage,
+                totalPages: Math.ceil(totalItems / limitPage),
+            }
+        };
+    }
+
+    async delete(id: number) {
+        await this.teacherModel.destroy({
+            where: {id},
+            cascade: true
+        })
+        return {message: 'Xóa giáo viên thành công'}
     }
 }
