@@ -33,7 +33,7 @@ export class StudentService {
             // Xếp lớp
             if(createStudentDto.studentClasses && createStudentDto.studentClasses.length > 0 && newStudent) {
                 const studentId = newStudent.id || newStudent.dataValues?.id;
-                const classIds = createStudentDto.studentClasses.map((studentClass) => studentClass.classId);
+                const classIds = createStudentDto.studentClasses.map((studentClass: StudentClassDto) => studentClass.classId);
                 const alreadyExists = await this.classModel.findAll({
                     where: {
                         id: classIds,

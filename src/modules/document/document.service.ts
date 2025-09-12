@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { Class, Document, DocumentClass } from 'src/models';
-import { CreateDocumentDto } from './dto/create-document.dto';
+import { CreateDocumentDto, DocumentClassDto } from './dto/create-document.dto';
 import { Sequelize } from 'sequelize-typescript';
 
 @Injectable()
@@ -36,7 +36,7 @@ export class DocumentService {
                 if(alreadyExists.length !== createDocumentDto.documentClasses.length) {
                     throw new BadRequestException('Lớp học không tồn tại');
                 }
-                const documentClasses = createDocumentDto.documentClasses.map((documentClass) => ({
+                const documentClasses = createDocumentDto.documentClasses.map((documentClass: DocumentClassDto) => ({
                     ...documentClass,
                     documentId,
                 }));
