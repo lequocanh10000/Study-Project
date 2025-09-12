@@ -21,6 +21,8 @@ export class StudentController {
     description: 'Email hoặc mật khẩu đã tồn tại',
   })
   @ApiOperation({ summary: 'Tạo học sinh mới(Admin only)'})
+  @UseGuards(new RoleGuard(['admin']))
+  @UseGuards(JwtGuard)
   @Post('create')
   async createStudent(@Body() createStudentDto: CreateStudentDto) {
     return await this.studentService.createStudent(createStudentDto);

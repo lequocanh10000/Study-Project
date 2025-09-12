@@ -10,6 +10,8 @@ import { JwtGuard } from '../auth/guards/jwt.guard';
 export class ClassController {
   constructor(private readonly classService: ClassService) {}
 
+  @UseGuards(new RoleGuard(['admin']))
+  @UseGuards(JwtGuard)
   @Post('create')
   async create(@Body() createClassDto: CreateClassDto) {
     return await this.classService.create(createClassDto);
