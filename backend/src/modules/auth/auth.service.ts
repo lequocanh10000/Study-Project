@@ -28,6 +28,14 @@ export class AuthService {
 
     async login({id, email, role}) {
         const accessToken = await this.jwtService.signAsync({id, email, role});
-        return { message: 'Đăng nhập thành công', accessToken, role};
+        return {
+            message: 'Đăng nhập thành công',
+            accessToken,
+            user: {
+                id, 
+                email,
+                role
+            }
+        };
     }
 }
