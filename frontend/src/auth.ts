@@ -39,7 +39,9 @@ export const { handlers, signIn, signOut, auth} = NextAuth({
                 } else {
                     throw new Error('Lỗi máy chủ')
                 }
-                
+
+                return user;
+            
             },
         }),
     ],
