@@ -7,6 +7,7 @@ export async function authenticate(email: string, password: string) {
         const r = await signIn('credentials', {
             email: email,
             password: password,
+            role: 'admin',
             // callbackUrl: '/',
             redirect: false
         })

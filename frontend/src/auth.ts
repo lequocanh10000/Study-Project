@@ -1,8 +1,7 @@
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
-import { InactiveAccountError, InvalidEmailPasswordError } from "./utils/errors";
+import { InvalidEmailPasswordError } from "./utils/errors";
 import { sendRequest } from "./utils/api";
-import Password from "antd/es/input/Password";
 import { IUser } from "./types/next-auth";
 
 export const { handlers, signIn, signOut, auth} = NextAuth({
@@ -25,17 +24,16 @@ export const { handlers, signIn, signOut, auth} = NextAuth({
                     }
                 })
 
-                if(!res.statusCode){
+                if(res.statusCode === 201){
+                    console.log('Đăng nhập thành công')
                     return {
                         id: res.data?.user.id,
                         email: res.data?.user.email,
                         role: res.data?.user.role,
                         accessToken: res.data?.accessToken,
                     }
-                } else if(+res.statusCode === 401) {
-                    throw new InvalidEmailPasswordError()
                 } else if(+res.statusCode === 400) {
-                    throw new InactiveAccountError()
+                    throw new InvalidEmailPasswordError()
                 } else {
                     throw new Error('Lỗi máy chủ')
                 }
@@ -58,6 +56,9 @@ export const { handlers, signIn, signOut, auth} = NextAuth({
         session({session, token}) {
             (session.user as IUser) = token.user
             return session
+        }, // Lưu vào cookie
+        authorized: async({auth}) => {
+            return !!auth
         }
     },
     secret: process.env.SECRET

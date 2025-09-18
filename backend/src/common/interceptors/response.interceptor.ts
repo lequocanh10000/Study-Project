@@ -37,6 +37,7 @@ export class TransformInterceptor<T> implements NestInterceptor<T, ApiResponse<T
         const request = context.switchToHttp().getRequest();
         const startTime = Number(request['startTime']);
         const endTime = Date.now();
+        const statusCode = context.switchToHttp().getResponse().statusCode
         const takenTime = `${endTime - startTime}ms`;
         return next.handle().pipe(map((data: any) => {
             if(data && typeof data === 'object' && 'success' in data && 'message' in data) {
@@ -63,6 +64,7 @@ export class TransformInterceptor<T> implements NestInterceptor<T, ApiResponse<T
 
             return {
                 success: true,
+                statusCode,
                 message: finalMessage,
                 data: Helper.formatDates(plainData),
                 date: new Date().toLocaleString('vi-VN', {

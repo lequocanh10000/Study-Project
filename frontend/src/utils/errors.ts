@@ -12,7 +12,3 @@ export class CustomAuthError extends AuthError {
 export class InvalidEmailPasswordError extends AuthError {
     static type = 'Email hoặc mật khẩu không hợp lệ'
 }
-
-export class InactiveAccountError extends AuthError {
-    static type = 'Tài khoản chưa được kích hoạt'
-}

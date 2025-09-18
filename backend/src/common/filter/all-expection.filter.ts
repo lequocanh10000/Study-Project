@@ -47,6 +47,7 @@ export class AllExceptionFilter implements ExceptionFilter {
 
     const errResponse: ApiResponse<any> = {
         success: false,
+        statusCode: status,
         message,
         ...(error && { error}),
         date: new Date().toLocaleString('vi-VN', {
