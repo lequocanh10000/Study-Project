@@ -1,12 +1,12 @@
 'use client'
-import { Button, Col, Divider, Form, Input, notification, Row } from 'antd';
+import { Button, Col, Divider, Form, Input, message, notification, Row } from 'antd';
 import { ArrowLeftOutlined } from '@ant-design/icons';
 import Link from 'next/link';
 import { authenticate } from '@/utils/actions';
 import { useRouter } from 'next/navigation';
 
 const Login = () => {
-    const router = useRouter()
+    const router = useRouter();
 
     const onFinish = async (values: any) => {
       const {email, password} = values;
@@ -17,6 +17,7 @@ const Login = () => {
             description: res?.error
         })
       } else {
+        notification.success({message: 'Đăng nhập thành công'})
         router.push('/dashboard')
       } 
     };

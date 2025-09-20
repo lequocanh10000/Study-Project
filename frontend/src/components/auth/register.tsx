@@ -3,10 +3,40 @@ import React from 'react';
 import { Button, Col, Divider, Form, Input, notification, Row } from 'antd';
 import { ArrowLeftOutlined } from '@ant-design/icons';
 import Link from 'next/link';
+import { sendRequest } from '@/utils/api';
+import { useRouter } from 'next/navigation';
 
 const Register = () => {
+    const router = useRouter();
 
     const onFinish = async (values: any) => {
+        const { email, password } = values;
+        const res = await sendRequest<any>({
+            url: `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/admin/register`,
+            method: 'POST',
+            body: {
+                email, password
+            }
+        })
+        console.log(res);
+
+        if (res.statusCode === 400) {
+            notification.error({
+                message: 'Lỗi đăng ký',
+                description: res.message
+            });
+        } else if(res.statusCode === 201) {
+            notification.success({
+                message: 'Đăng ký thành công',
+                description: 'Bạn sẽ được trở về trang đăng nhập'
+            })
+            router.push(`/auth/login`);
+        } else {
+            notification.error({
+                message: 'Máy chủ đang gặp sự cố',
+                description: res.message
+            });
+        }
 
     };
 
@@ -50,13 +80,6 @@ const Register = () => {
                             ]}
                         >
                             <Input.Password />
-                        </Form.Item>
-
-                        <Form.Item
-                            label="Name"
-                            name="name"
-                        >
-                            <Input />
                         </Form.Item>
 
                         <Form.Item
