@@ -15,13 +15,9 @@ export class TeacherController {
     return await this.teacherService.register(createTeacherDto);
   }
 
-  @Patch('password/:id')
-  @UseGuards(JwtGuard) 
-  async changePassword(
-    @Body() changePasswordDto, 
-    @Param('id') teacherId: number,
-    @CurrentInfo() account) {
-    return await this.teacherService.changePassword(changePasswordDto, teacherId, account);
+  @Patch('password')
+  async changePassword(@Body() changePasswordDto) {
+    return await this.teacherService.changePassword(changePasswordDto);
   }
 
   @UseGuards(new RoleGuard(['admin', 'teacher']))

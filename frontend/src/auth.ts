@@ -10,6 +10,7 @@ export const { handlers, signIn, signOut, auth} = NextAuth({
             credentials: {
                 email: {},
                 password: {},
+                role: {}
             },
             authorize: async (credentials) => {
                 let user = null;
@@ -20,7 +21,7 @@ export const { handlers, signIn, signOut, auth} = NextAuth({
                     body: {
                         email: credentials.email,
                         password: credentials.password,
-                        role: 'admin'
+                        role: credentials.role,
                     }
                 })
 
@@ -37,6 +38,8 @@ export const { handlers, signIn, signOut, auth} = NextAuth({
                 } else {
                     throw new Error('Lỗi máy chủ')
                 }
+
+                console.log(res)
 
                 return user;
             

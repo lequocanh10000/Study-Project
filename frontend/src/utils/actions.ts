@@ -2,12 +2,12 @@
 
 import { signIn } from "@/auth"
 
-export async function authenticate(email: string, password: string) {
+export async function authenticate(email: string, password: string, role: string) {
     try {
         const r = await signIn('credentials', {
             email: email,
             password: password,
-            role: 'admin',
+            role: role,
             // callbackUrl: '/',
             redirect: false
         })

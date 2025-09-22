@@ -1,25 +1,43 @@
 'use client'
-import { Button, Col, Divider, Form, Input, message, notification, Row, Select } from 'antd';
+import React from 'react';
+import { Button, Col, Divider, Form, Input, notification, Row } from 'antd';
 import { ArrowLeftOutlined } from '@ant-design/icons';
 import Link from 'next/link';
-import { authenticate } from '@/utils/actions';
+import { sendRequest } from '@/utils/api';
 import { useRouter } from 'next/navigation';
 
-const Login = () => {
+const Password = () => {
     const router = useRouter();
 
     const onFinish = async (values: any) => {
-        const { email, password, role } = values;
-        const res = await authenticate(email, password, role);
-        if (res?.error) {
+        const { email, password, confirmPassword } = values;
+        const res = await sendRequest<any>({
+            url: `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/teacher/password`,
+            method: 'PATCH',
+            body: {
+                email, password, confirmPassword
+            }
+        })
+        console.log(res);
+
+        if (res.statusCode === 400) {
             notification.error({
-                message: 'Lỗi đăng nhập',
-                description: res?.error
+                message: 'Lỗi đổi mật khẩu',
+                description: res.message
+            });
+        } else if(res.statusCode === 200) {
+            notification.success({
+                message: 'Đổi mật khẩu thành công',
+                description: 'Bạn sẽ được trở về trang đăng nhập'
             })
+            router.push(`/auth/login`);
         } else {
-            notification.success({ message: 'Đăng nhập thành công' })
-            router.push('/dashboard')
+            notification.error({
+                message: 'Máy chủ đang gặp sự cố',
+                description: res.message
+            });
         }
+
     };
 
     return (
@@ -31,7 +49,7 @@ const Login = () => {
                     border: "1px solid #ccc",
                     borderRadius: "5px"
                 }}>
-                    <legend>Đăng Nhập</legend>
+                    <legend>Đổi mật khẩu</legend>
                     <Form
                         name="basic"
                         onFinish={onFinish}
@@ -65,40 +83,32 @@ const Login = () => {
                         </Form.Item>
 
                         <Form.Item
-                            label="Role"
-                            name="role"
+                            label="Confirm Password"
+                            name="confirmPassword"
                             rules={[
                                 {
                                     required: true,
-                                    message: 'Please select your role!',
+                                    message: 'Please input your password!',
                                 },
                             ]}
                         >
-                            <Select placeholder="Select a role">
-                                <Select.Option value="admin">Admin</Select.Option>
-                                <Select.Option value="teacher">Teacher</Select.Option>
-                            </Select>
+                            <Input.Password />
                         </Form.Item>
-
-
 
                         <Form.Item
                         >
                             <Button type="primary" htmlType="submit">
-                                Login
+                                Submit
                             </Button>
                         </Form.Item>
                     </Form>
                     <Link href={"/"}><ArrowLeftOutlined /> Quay lại trang chủ</Link>
-                    <Divider />
-                    <div style={{ textAlign: "center" }}>
-                        Chưa có tài khoản? <Link href={"/auth/register"}>Đăng ký tại đây</Link>
-                    </div>
-                    <Button type='link' onClick={() => router.push('/auth/password')}>Đổi mật khẩu(Giáo viên)</Button>
+                    
                 </fieldset>
             </Col>
         </Row>
+
     )
 }
 
-export default Login;
+export default Password;
