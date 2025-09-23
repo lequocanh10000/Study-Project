@@ -9,7 +9,7 @@ export class RoleGuard implements CanActivate {
     ): boolean | Promise<boolean> | Observable<boolean> {
         const request = context.switchToHttp().getRequest();
         const accept =  this.roles.includes(request.user.role);
-        if(!accept) throw new ForbiddenException('Bạn không có quyền truy cập');
+        if(!accept) throw new ForbiddenException('Bạn không có quyền thao tác');
         return accept;
     }
 }

@@ -10,6 +10,8 @@ import { FilterTeacherDto } from './dto/filter-teacher.dto';
 export class TeacherController {
   constructor(private readonly teacherService: TeacherService) {}
 
+  @UseGuards(new RoleGuard(['admin']))
+  @UseGuards(JwtGuard)
   @Post('register')
   async register(@Body() createTeacherDto: CreateTeacherDto) {
     return await this.teacherService.register(createTeacherDto);
@@ -27,7 +29,7 @@ export class TeacherController {
     return this.teacherService.findOne(id, account);
   }
 
-  @UseGuards(new RoleGuard(['admin']))
+  @UseGuards(new RoleGuard(['admin', 'teacher']))
   @UseGuards(JwtGuard)
   @Get('all')
   async findAll(@Query() filterTeacherDto: FilterTeacherDto) {

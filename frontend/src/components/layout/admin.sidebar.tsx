@@ -31,8 +31,8 @@ const AdminSideBar = () => {
                     icon: <AppstoreOutlined />,
                 },
                 {
-                    key: "users",
-                    label: <Link href={"/dashboard/user"}>Manage Users</Link>,
+                    key: "teacher",
+                    label: <Link href={"/dashboard/teacher"}>Manage Teacher</Link>,
                     icon: <TeamOutlined />,
                 },
                 {
