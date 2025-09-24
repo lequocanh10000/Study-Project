@@ -103,10 +103,10 @@ export class StudentService {
         return {
             items: rows,
             paginationMeta: {
-                totalItems,
-                currentPage,
+                current: currentPage,
                 limit: limitPage,
-                totalPages: Math.ceil(totalItems / limitPage),
+                pages: Math.ceil(totalItems / limitPage),
+                total: totalItems,
             }
         };
     }
@@ -119,9 +119,6 @@ export class StudentService {
                     attributes: {
                         exclude: ['createdAt', 'updatedAt', 'id', 'studentId'],
                     },
-                    where: {
-                        isExpelled: false,
-                    }
                 },
             ],
             attributes: {

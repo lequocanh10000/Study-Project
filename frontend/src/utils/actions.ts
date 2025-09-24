@@ -53,7 +53,7 @@ export const handleCreateTeacherAction = async (data: any) => {
 export const handleDeleteTeacherAction = async (id: any) => {
     const session = await auth();
     const res = await sendRequest<IBackendRes<any>>({
-        url: `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/teacher/${id}`,
+        url: `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/teacher/delete/${id}`,
         method: "DELETE",
         headers: {
             Authorization: `Bearer ${session?.user?.accessToken}`,
@@ -78,3 +78,45 @@ export const handleDetailTeacherAction = async (id: any) => {
     return res;
 }
 
+export const handleCreateStudentAction = async (data: any) => {
+    const session = await auth();
+    const res = await sendRequest<IBackendRes<any>>({
+        url: `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/student/create`,
+        method: "POST",
+        headers: {
+            Authorization: `Bearer ${session?.user?.accessToken}`,
+        },
+        body: { ...data }
+    })
+    console.log(res)
+    revalidateTag("list-students")
+    return res;
+}
+
+export const handleDeleteStudentAction = async (id: any) => {
+    const session = await auth();
+    const res = await sendRequest<IBackendRes<any>>({
+        url: `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/student/delete/${id}`,
+        method: "DELETE",
+        headers: {
+            Authorization: `Bearer ${session?.user?.accessToken}`,
+        },
+    })
+
+    revalidateTag("list-students")
+    return res;
+}
+
+export const handleDetailStudentAction = async (id: any) => {
+    const session = await auth();
+    const res = await sendRequest<IBackendRes<any>>({
+        url: `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/student/one/${id}`,
+        method: "GET",
+        headers: {
+            Authorization: `Bearer ${session?.user?.accessToken}`,
+        },
+    })
+
+    revalidateTag("list-students")
+    return res;
+}

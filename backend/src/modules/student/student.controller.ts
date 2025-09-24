@@ -28,7 +28,7 @@ export class StudentController {
     return await this.studentService.createStudent(createStudentDto);
   }
 
-  @UseGuards(new RoleGuard(['admin']))
+  @UseGuards(new RoleGuard(['admin', 'teacher']))
   @UseGuards(JwtGuard)
   @Get('all')
   async getAllStudents(@Query() filterstudentDto: FilterStudentDto ) {

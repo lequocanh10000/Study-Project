@@ -15,7 +15,7 @@ export class CourseController {
     return await this.courseService.createCourse(createCourseDto)
   }
   
-  @UseGuards(new RoleGuard(['admin']))
+  @UseGuards(new RoleGuard(['admin', 'teacher']))
   @UseGuards(JwtGuard)
   @Get('all')
   async getAllCourse() {

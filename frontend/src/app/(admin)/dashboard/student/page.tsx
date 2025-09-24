@@ -1,13 +1,12 @@
 import { auth } from "@/auth";
-import TeacherTable from "@/components/admin/teacher/teacher.table";
+import StudentTable from "@/components/admin/student/student.table";
 import { sendRequest } from "@/utils/api";
-import { notification } from "antd";
 
 interface IProps {
     params: { id: string }
     searchParams: { [key: string]: string | string[] | undefined }
 }
-const ManageTeacherPage = async (props: IProps) => {
+const ManageStudentPage = async (props: IProps) => {
 
     const page = props?.searchParams?.page ?? 1;
     const limit = props?.searchParams?.limit ?? 10;
@@ -15,24 +14,24 @@ const ManageTeacherPage = async (props: IProps) => {
     const session = await auth();
 
     const res = await sendRequest<any>({
-        url: `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/teacher/all`,
+        url: `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/student/all`,
         method: "GET",
+        headers: {
+            Authorization: `Bearer ${session?.user.accessToken}`,
+        },
         queryParams: {
             page,
             limit,
             search
         },
-        headers: {
-            Authorization: `Bearer ${session?.user.accessToken}`,
-        },
         nextOption: {
-            next: { tags: ['list-teachers'] }
+            next: { tags: ['list-students'] }
         }
     })
-
+    
     return (
         <div>
-            <TeacherTable
+            <StudentTable
                 items={res?.data.items ?? []}
                 paginationMeta={res?.data.paginationMeta}
             />
@@ -40,4 +39,4 @@ const ManageTeacherPage = async (props: IProps) => {
     )
 }
 
-export default ManageTeacherPage;
+export default ManageStudentPage;

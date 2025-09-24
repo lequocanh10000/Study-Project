@@ -1,11 +1,11 @@
 'use client'
-import { handleDeleteTeacherAction, handleDetailTeacherAction } from "@/utils/actions";
+import { handleDetailStudentAction, handleCreateStudentAction, handleDeleteStudentAction } from "@/utils/actions";
 import { DeleteTwoTone, EyeTwoTone } from "@ant-design/icons";
-import { Button, Input, notification, Popconfirm, Table } from "antd"
+import { Button, Input, notification, Popconfirm, Table, TablePaginationConfig, TableProps } from "antd"
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useState } from "react";
-import TeacherCreate from "./teacher.create";
-import TeacherDetail from './teacher.detail';
+import StudentCreate from "./student.create";
+import StudentDetail from "./student.detail";
 
 interface IProps {
     items: any
@@ -17,7 +17,8 @@ interface IProps {
     }
 }
 
-const TeacherTable = (props: IProps) => {
+
+const StudentTable = (props: IProps) => {
     const { items, paginationMeta } = props;
     const searchParams = useSearchParams();
     const pathname = usePathname();
@@ -65,14 +66,6 @@ const TeacherTable = (props: IProps) => {
             dataIndex: 'phone',
         },
         {
-            title: 'Nơi tốt nghiệp',
-            dataIndex: 'graduationPlace',
-        },
-        {
-            title: 'Năm kinh nghiệm',
-            dataIndex: 'expYear',
-        },
-        {
             title: 'Actions',
             render: (text: any, record: any, index: any) => {
                 return (
@@ -80,9 +73,9 @@ const TeacherTable = (props: IProps) => {
                         <EyeTwoTone
                             twoToneColor="#f57800" style={{ cursor: "pointer", margin: "0 20px" }}
                             onClick={async () => {
-                                const res = await handleDetailTeacherAction(record?.id)
-                                if (res.statusCode === 400) {
-                                    notification.error({ message: 'Bạn không thể xem thông tin giáo viên khác' })
+                                const res = await handleDetailStudentAction(record?.id)
+                                if (res.statusCode === 403) {
+                                    notification.error({ message: 'Bạn không thể xem thông tin học sinh ở đây' })
                                     return
                                 }
                                 setDetailData(res?.data); // lưu dữ liệu chi tiết
@@ -92,12 +85,12 @@ const TeacherTable = (props: IProps) => {
 
                         <Popconfirm
                             placement="leftTop"
-                            title={"Xác nhận xóa giáo viên"}
-                            description={"Bạn có chắc chắn muốn xóa giáo viên này ?"}
+                            title={"Xác nhận xóa học sinh"}
+                            description={"Bạn có chắc chắn muốn xóa học sinh này ?"}
                             onConfirm={async () => {
-                                const res = await handleDeleteTeacherAction(record?.id)
-                                if (res.statusCode === 404) {
-                                    notification.error({ message: 'Bạn không thể xóa giáo viên' })
+                                const res = await handleDeleteStudentAction(record?.id)
+                                if (res.statusCode === 403) {
+                                    notification.error({ message: 'Bạn không thể xóa học sinh' })
                                     return
                                 }
                             }}
@@ -124,13 +117,14 @@ const TeacherTable = (props: IProps) => {
 
     const onSearch = (value: string) => {
         const params = new URLSearchParams(searchParams as any);
-        if (value) {
+        if(value) {
             params.set('search', value)
         } else {
             params.delete('search')
         }
         replace(`${pathname}?${params.toString()}`);
     }
+
 
     return (
         <>
@@ -139,11 +133,11 @@ const TeacherTable = (props: IProps) => {
                 alignItems: "center",
                 marginBottom: 20
             }}>
-                <span>Quản lý giáo viên</span>
+                <span>Quản lý học sinh</span>
                 <Button onClick={() => setIsCreateModalOpen(true)}>Tạo mới</Button>
             </div>
             <Input.Search
-                placeholder="Nhập tên giáo viên tại đây"
+                placeholder="Nhập tên học sinh tại đây"
                 allowClear
                 onSearch={onSearch}
                 style={{ width: 300 }}
@@ -158,18 +152,21 @@ const TeacherTable = (props: IProps) => {
                     pageSize: paginationMeta.limit,
                     showSizeChanger: true,
                     total: paginationMeta.total,
-                    showTotal: (total, range) => { return (<div> {range[0]}-{range[1]} trên {total} rows</div>) }
+                    showTotal: (total, range) => {
+                        return <div>{range[0]}–{range[1]} trên {total} học sinh</div>
+                    }
                 }}
                 onChange={onChange}
             />
 
-            <TeacherCreate
+
+            <StudentCreate
                 isCreateModalOpen={isCreateModalOpen}
                 setIsCreateModalOpen={setIsCreateModalOpen}
             />
 
-            <TeacherDetail
-                teacher={detailData}
+            <StudentDetail
+                student={detailData}
                 isDetailModalOpen={isDetailModalOpen}
                 setIsDetailModalOpen={setIsDetailModalOpen}
             />
@@ -179,4 +176,4 @@ const TeacherTable = (props: IProps) => {
     )
 }
 
-export default TeacherTable;
+export default StudentTable;
