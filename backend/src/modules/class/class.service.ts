@@ -16,28 +16,28 @@ export class ClassService {
         private readonly courseService: CourseService,
         @InjectModel(Class) private readonly classModel: typeof Class,
         @InjectModel(TeacherClass) private readonly teacherClassModel: typeof TeacherClass,
-    ) {}
+    ) { }
 
     private async checkPermission(id: number, account) {
-        if(account.role === 'teacher') {
+        if (account.role === 'teacher') {
             const teacherClass = await this.teacherClassModel.findOne({
                 where: {
                     classId: id,
                     teacherId: account.id
                 }
             });
-            if(!teacherClass) {
+            if (!teacherClass) {
                 throw new ForbiddenException('Bạn không thể thao tác với lớp này');
             }
         }
     }
 
-    async findOne(id: number, account){
+    async findOne(id: number, account) {
         await this.checkPermission(id, account)
         return this.classModel.findOne({
             include: [
-                { 
-                    model: StudentClass, 
+                {
+                    model: StudentClass,
                     attributes: {
                         exclude: ['createdAt', 'updatedAt', 'id', 'classId'],
                     }
@@ -60,18 +60,18 @@ export class ClassService {
     async create(createClassDto: CreateClassDto) {
         const t = await this.sequelize.transaction();
         try {
-            const course = this.courseService.findOne(createClassDto.courseId);
-            if(!course) {
+            const course = await this.courseService.findOne(createClassDto.courseId);
+            if (!course) {
                 throw new BadRequestException('Khóa học không tồn tại')
             }
-            const newClass = await this.classModel.create(createClassDto as any, {transaction: t});
+            const newClass = await this.classModel.create(createClassDto as any, { transaction: t });
             await t.commit();
             return {
                 message: 'Tạo lớp học thành công',
                 data: newClass,
             }
-            
-        } catch(error) {
+
+        } catch (error) {
             const message = error.message || 'Tạo lớp học thất bại'
             await t.rollback();
             throw new BadRequestException(message);
@@ -92,33 +92,33 @@ export class ClassService {
         } = filterClasssDto;
 
         const whereClause: any = {}
-        if(search !== undefined) {
+        if (search !== undefined) {
             whereClause[Op.or] = [
-                {classRoom: {[Op.like]: `%${search}%`}},
+                { classRoom: { [Op.like]: `%${search}%` } },
             ];
         }
 
-        if(isOpened !== undefined) whereClause.isOpened = isOpened;
-        if(courseId !== undefined) whereClause.courseId = courseId;
+        if (isOpened !== undefined) whereClause.isOpened = isOpened;
+        if (courseId !== undefined) whereClause.courseId = courseId;
 
         const limitPage = Number(limit || this.configService.get<number>('LIMIT_CLASS'));
         const currentPage = Number(page || 1);
         const offset = (currentPage - 1) * limitPage;
 
-        if(soonest !== undefined || latest !== undefined) {
+        if (soonest !== undefined || latest !== undefined) {
             whereClause.openingDate = {}
-            if(soonest !== undefined) whereClause.openingDate[Op.gte] = soonest;
-            if(latest !== undefined) whereClause.openingDate[Op.lte] = latest;
+            if (soonest !== undefined) whereClause.openingDate[Op.gte] = soonest;
+            if (latest !== undefined) whereClause.openingDate[Op.lte] = latest;
         }
 
         let orderClause: any[] = [];
-        if(sortBy && sortOrder) {
+        if (sortBy && sortOrder) {
             orderClause = [[sortBy, sortOrder]];
         } else {
             orderClause = [['openingDate', 'ASC']]
         }
 
-        const {rows, count} = await this.classModel.findAndCountAll({
+        const { rows, count } = await this.classModel.findAndCountAll({
             where: whereClause,
             order: orderClause,
             limit: limitPage,
@@ -130,28 +130,28 @@ export class ClassService {
         return {
             items: rows,
             paginationMeta: {
-                totalItems,
-                currentPage,
+                current: currentPage,
                 limit: limitPage,
-                totalPages: Math.ceil(totalItems / limitPage),
+                pages: Math.ceil(totalItems / limitPage),
+                total: totalItems
             }
         };
     }
 
     async removeHard(id: number) {
         await this.classModel.destroy({
-            where: { id},
+            where: { id },
             cascade: true
         });
-        return { message: 'Xóa lớp thành công'};
+        return { message: 'Xóa lớp thành công' };
     }
 
     async removeSoft(id: number, account) {
         await this.checkPermission(id, account);
         await this.classModel.update(
             { isOpened: false },
-            { where: { id}}
+            { where: { id } }
         );
-        return { message: 'Đóng lớp thành công'};
+        return { message: 'Đóng lớp thành công' };
     }
 }

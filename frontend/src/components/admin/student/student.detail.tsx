@@ -42,7 +42,7 @@ const StudentDetail = ({ student, isDetailModalOpen, setIsDetailModalOpen }: IPr
                                 </div>
                             ))
                         ) : (
-                            <span>Chưa có lớp dạy</span>
+                            <span>Chưa có lớp học</span>
                         )}
                     </Descriptions.Item>
                 </Descriptions>

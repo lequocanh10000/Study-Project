@@ -25,7 +25,7 @@ export class ClassController {
     return await this.classService.findOne(id, account);
   }
 
-  @UseGuards(new RoleGuard(['admin']))
+  @UseGuards(new RoleGuard(['admin', 'teacher']))
   @UseGuards(JwtGuard)
   @Get('all')
   async findAll(@Query() filterClassDto: FilterClassDto) {

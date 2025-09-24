@@ -1,7 +1,8 @@
-import { handleCreateStudentAction } from '@/utils/actions';
+import { handleCreateClassAction } from '@/utils/actions';
 import {
     Modal, Input, Form, Row, Col, message,
-    notification
+    notification,
+    Select
 } from 'antd';
 
 interface IProps {
@@ -9,7 +10,7 @@ interface IProps {
     setIsCreateModalOpen: (v: boolean) => void;
 }
 
-const StudentCreate = (props: IProps) => {
+const ClassCreate = (props: IProps) => {
 
     const {
         isCreateModalOpen, setIsCreateModalOpen
@@ -24,13 +25,13 @@ const StudentCreate = (props: IProps) => {
     }
 
     const onFinish = async (values: any) => {
-        const res = await handleCreateStudentAction(values);
+        const res = await handleCreateClassAction(values);
         if (res?.statusCode === 201) {
             handleCloseCreateModal();
-            message.success(`Tạo lớp học thành công`)
+            message.success(`Tạo học sinh thành công`)
         } else {
             notification.error({
-                message: "Tạo lớp học thất bại",
+                message: "Tạo học sinh thất bại",
                 description: res?.message
             })
         }
@@ -54,9 +55,21 @@ const StudentCreate = (props: IProps) => {
                 <Row gutter={[15, 15]}>
                     <Col span={24}>
                         <Form.Item
-                            label="Họ tên"
-                            name="fullName"
-                            rules={[{ required: true, message: 'Vui lòng nhập họ tên!' }]}
+                            label="ID khóa học"
+                            name="courseId"
+                            rules={[
+                                { required: true, message: 'Vui lòng id khóa học' },
+                            ]}
+                        >
+                            <Input type="number"/>
+                        </Form.Item>
+                    </Col>
+
+                    <Col span={24}>
+                        <Form.Item
+                            label="Số lượng học sinh"
+                            name="maxNumber"
+                            rules={[{ required: true, message: 'Vui lòng nhập số lượng học sinh' }]}
                         >
                             <Input />
                         </Form.Item>
@@ -64,9 +77,9 @@ const StudentCreate = (props: IProps) => {
 
                     <Col span={24}>
                         <Form.Item
-                            label="Ngày sinh"
-                            name="dob"
-                            rules={[{ required: true, message: 'Vui lòng nhập ngày sinh!' }]}
+                            label="Ngày khai giảng"
+                            name="openingDate"
+                            rules={[{ required: true, message: 'Vui lòng nhập ngày khai giảng' }]}
                         >
                             <Input type="date" />
                         </Form.Item>
@@ -74,46 +87,33 @@ const StudentCreate = (props: IProps) => {
 
                     <Col span={24}>
                         <Form.Item
-                            label="Địa chỉ"
-                            name="address"
-                            rules={[{ required: true, message: 'Vui lòng nhập địa chỉ!' }]}
+                            label="Phòng học"
+                            name="classRoom"
+                            rules={[
+                                { required: true, message: 'Vui lòng phòng học' },
+                            ]}
                         >
-                            <Input />
+                            <Input/>
                         </Form.Item>
                     </Col>
 
                     <Col span={24}>
                         <Form.Item
-                            label="Email"
-                            name="email"
-                            rules={[
-                                { required: true, message: 'Vui lòng nhập email!' },
-                                { type: 'email', message: 'Email không hợp lệ!' }
-                            ]}
+                            label="Hình thức học"
+                            name="learningForm"
+                            rules={[{ required: true, message: 'Lựa chọn hình thức học của lớp', },]}
                         >
-                            <Input type="email" />
+                            <Select placeholder="Lựa chọn">
+                                <Select.Option value="Online">Online</Select.Option>
+                                <Select.Option value="Offline">Offline</Select.Option>
+                            </Select>
                         </Form.Item>
                     </Col>
 
-                    <Col span={24}>
-                        <Form.Item
-                            label="Số điện thoại"
-                            name="phone"
-                            rules={[
-                                { required: true, message: 'Vui lòng nhập số điện thoại!' },
-                                { pattern: /^0\d{9,11}$/, message: 'Số điện thoại không hợp lệ!' }
-                            ]}
-                        >
-                            <Input />
-                        </Form.Item>
-                    </Col>
-
-
-                    
                 </Row>
             </Form>
         </Modal>
     )
 }
 
-export default StudentCreate;
+export default ClassCreate;

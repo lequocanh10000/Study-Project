@@ -120,3 +120,46 @@ export const handleDetailStudentAction = async (id: any) => {
     revalidateTag("list-students")
     return res;
 }
+
+export const handleCreateClassAction = async (data: any) => {
+    const session = await auth();
+    const res = await sendRequest<IBackendRes<any>>({
+        url: `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/class/create`,
+        method: "POST",
+        headers: {
+            Authorization: `Bearer ${session?.user?.accessToken}`,
+        },
+        body: { ...data }
+    })
+    console.log(res)
+    revalidateTag("list-classes")
+    return res;
+}
+
+export const handleDetailClassAction = async (id: any) => {
+    const session = await auth();
+    const res = await sendRequest<IBackendRes<any>>({
+        url: `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/class/one/${id}`,
+        method: "GET",
+        headers: {
+            Authorization: `Bearer ${session?.user?.accessToken}`,
+        },
+    })
+
+    revalidateTag("list-classes")
+    return res;
+}
+
+export const handleDeleteClassAction = async (id: any) => {
+    const session = await auth();
+    const res = await sendRequest<IBackendRes<any>>({
+        url: `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/class/hard/${id}`,
+        method: "DELETE",
+        headers: {
+            Authorization: `Bearer ${session?.user?.accessToken}`,
+        },
+    })
+
+    revalidateTag("list-classes")
+    return res;
+}

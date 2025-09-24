@@ -1,11 +1,12 @@
 'use client'
-import { handleDetailStudentAction, handleDeleteStudentAction } from "@/utils/actions";
+import { handleDetailClassAction, handleDeleteClassAction } from "@/utils/actions";
 import { DeleteTwoTone, EyeTwoTone } from "@ant-design/icons";
 import { Button, Input, notification, Popconfirm, Table, TablePaginationConfig, TableProps } from "antd"
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useState } from "react";
-import StudentCreate from "./student.create";
-import StudentDetail from "./student.detail";
+import ClassCreate from "./class.create";
+import ClassDetail from "./class.detail";
+
 
 interface IProps {
     items: any
@@ -18,7 +19,7 @@ interface IProps {
 }
 
 
-const StudentTable = (props: IProps) => {
+const ClassTable = (props: IProps) => {
     const { items, paginationMeta } = props;
     const searchParams = useSearchParams();
     const pathname = usePathname();
@@ -46,24 +47,24 @@ const StudentTable = (props: IProps) => {
             dataIndex: 'id',
         },
         {
-            title: 'Họ tên',
-            dataIndex: 'fullName',
+            title: 'Số học sinh',
+            dataIndex: 'maxNumber',
         },
         {
-            title: 'Ngày sinh',
-            dataIndex: 'dob',
+            title: 'Ngày khai giảng',
+            dataIndex: 'openingDate',
         },
         {
-            title: 'Địa chỉ',
-            dataIndex: 'address',
+            title: 'Hình thức học',
+            dataIndex: 'learningForm',
         },
         {
-            title: 'Email',
-            dataIndex: 'email',
+            title: 'Phòng học',
+            dataIndex: 'classRoom',
         },
         {
-            title: 'SĐT',
-            dataIndex: 'phone',
+            title: 'Mã khóa học',
+            dataIndex: 'courseId',
         },
         {
             title: 'Actions',
@@ -73,9 +74,9 @@ const StudentTable = (props: IProps) => {
                         <EyeTwoTone
                             twoToneColor="#f57800" style={{ cursor: "pointer", margin: "0 20px" }}
                             onClick={async () => {
-                                const res = await handleDetailStudentAction(record?.id)
+                                const res = await handleDetailClassAction(record?.id)
                                 if (res.statusCode === 403) {
-                                    notification.error({ message: 'Bạn không thể xem thông tin học sinh ở đây' })
+                                    notification.error({ message: 'Bạn không thể xem thông tin lớp ở đây' })
                                     return
                                 }
                                 setDetailData(res?.data); // lưu dữ liệu chi tiết
@@ -85,12 +86,12 @@ const StudentTable = (props: IProps) => {
 
                         <Popconfirm
                             placement="leftTop"
-                            title={"Xác nhận xóa học sinh"}
-                            description={"Bạn có chắc chắn muốn xóa học sinh này ?"}
+                            title={"Xác nhận xóa lớp"}
+                            description={"Bạn có chắc chắn muốn xóa lớp này ?"}
                             onConfirm={async () => {
-                                const res = await handleDeleteStudentAction(record?.id)
+                                const res = await handleDeleteClassAction(record?.id)
                                 if (res.statusCode === 403) {
-                                    notification.error({ message: 'Bạn không thể xóa học sinh' })
+                                    notification.error({ message: 'Bạn không thể xóa lớp học' })
                                     return
                                 }
                             }}
@@ -160,13 +161,13 @@ const StudentTable = (props: IProps) => {
             />
 
 
-            <StudentCreate
+            <ClassCreate
                 isCreateModalOpen={isCreateModalOpen}
                 setIsCreateModalOpen={setIsCreateModalOpen}
             />
 
-            <StudentDetail
-                student={detailData}
+            <ClassDetail
+                classData={detailData}
                 isDetailModalOpen={isDetailModalOpen}
                 setIsDetailModalOpen={setIsDetailModalOpen}
             />
@@ -176,4 +177,4 @@ const StudentTable = (props: IProps) => {
     )
 }
 
-export default StudentTable;
+export default ClassTable;
