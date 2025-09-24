@@ -155,10 +155,10 @@ export class TeacherService {
         return {
             items: rows,
             paginationMeta: {
-                totalItems,
-                currentPage,
+                current: currentPage,
                 limit: limitPage,
-                totalPages: Math.ceil(totalItems / limitPage),
+                pages: Math.ceil(totalItems / limitPage),
+                total: totalItems
             }
         };
     }
