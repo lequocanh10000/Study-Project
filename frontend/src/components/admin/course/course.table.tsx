@@ -1,11 +1,11 @@
 'use client'
-import { handleDetailClassAction, handleDeleteClassAction } from "@/utils/actions";
+import { handleDetailCourseAction, handleDeleteCourseAction } from "@/utils/actions";
 import { DeleteTwoTone, EyeTwoTone } from "@ant-design/icons";
 import { Button, Input, notification, Popconfirm, Table, TablePaginationConfig, TableProps } from "antd"
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useState } from "react";
-import ClassCreate from "./class.create";
-import ClassDetail from "./class.detail";
+import CourseCreate from "./course.create";
+import CourseDetail from "./course.detail";
 
 
 interface IProps {
@@ -19,7 +19,7 @@ interface IProps {
 }
 
 
-const ClassTable = (props: IProps) => {
+const CourseTable = (props: IProps) => {
     const { items, paginationMeta } = props;
     const searchParams = useSearchParams();
     const pathname = usePathname();
@@ -47,24 +47,12 @@ const ClassTable = (props: IProps) => {
             dataIndex: 'id',
         },
         {
-            title: 'Số học sinh',
-            dataIndex: 'maxNumber',
+            title: 'Tên khóa',
+            dataIndex: 'name',
         },
         {
-            title: 'Ngày khai giảng',
-            dataIndex: 'openingDate',
-        },
-        {
-            title: 'Hình thức học',
-            dataIndex: 'learningForm',
-        },
-        {
-            title: 'Phòng học',
-            dataIndex: 'classRoom',
-        },
-        {
-            title: 'Mã khóa học',
-            dataIndex: 'courseId',
+            title: 'Số tiết học',
+            dataIndex: 'numberSessions',
         },
         {
             title: 'Actions',
@@ -74,9 +62,9 @@ const ClassTable = (props: IProps) => {
                         <EyeTwoTone
                             twoToneColor="#f57800" style={{ cursor: "pointer", margin: "0 20px" }}
                             onClick={async () => {
-                                const res = await handleDetailClassAction(record?.id)
+                                const res = await handleDetailCourseAction(record?.id)
                                 if (res.statusCode === 403) {
-                                    notification.error({ message: 'Bạn không thể xem thông tin lớp ở đây' })
+                                    notification.error({ message: 'Bạn không thể xem thông tin khóa học ở đây' })
                                     return
                                 }
                                 setDetailData(res?.data); // lưu dữ liệu chi tiết
@@ -86,12 +74,12 @@ const ClassTable = (props: IProps) => {
 
                         <Popconfirm
                             placement="leftTop"
-                            title={"Xác nhận xóa lớp"}
-                            description={"Bạn có chắc chắn muốn xóa lớp này ?"}
+                            title={"Xác nhận xóa khóa học"}
+                            description={"Bạn có chắc chắn muốn xóa khóa học này ?"}
                             onConfirm={async () => {
-                                const res = await handleDeleteClassAction(record?.id)
+                                const res = await handleDeleteCourseAction(record?.id)
                                 if (res.statusCode === 403) {
-                                    notification.error({ message: 'Bạn không thể xóa lớp học' })
+                                    notification.error({ message: 'Bạn không thể xóa khóa học' })
                                     return
                                 }
                             }}
@@ -134,11 +122,11 @@ const ClassTable = (props: IProps) => {
                 alignItems: "center",
                 marginBottom: 20
             }}>
-                <span>Quản lý học sinh</span>
+                <span>Quản lý khóa học</span>
                 <Button onClick={() => setIsCreateModalOpen(true)}>Tạo mới</Button>
             </div>
             <Input.Search
-                placeholder="Nhập tên phòng học tại đây"
+                placeholder="Nhập tên khóa học tại đây"
                 allowClear
                 onSearch={onSearch}
                 style={{ width: 300 }}
@@ -154,20 +142,20 @@ const ClassTable = (props: IProps) => {
                     showSizeChanger: true,
                     total: paginationMeta.total,
                     showTotal: (total, range) => {
-                        return <div>{range[0]}–{range[1]} trên {total} lớp học</div>
+                        return <div>{range[0]}–{range[1]} trên {total} khóa học</div>
                     }
                 }}
                 onChange={onChange}
             />
 
 
-            <ClassCreate
+            <CourseCreate
                 isCreateModalOpen={isCreateModalOpen}
                 setIsCreateModalOpen={setIsCreateModalOpen}
             />
 
-            <ClassDetail
-                classData={detailData}
+            <CourseDetail
+                course={detailData}
                 isDetailModalOpen={isDetailModalOpen}
                 setIsDetailModalOpen={setIsDetailModalOpen}
             />
@@ -177,4 +165,4 @@ const ClassTable = (props: IProps) => {
     )
 }
 
-export default ClassTable;
+export default CourseTable;

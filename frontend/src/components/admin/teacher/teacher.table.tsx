@@ -158,7 +158,7 @@ const TeacherTable = (props: IProps) => {
                     pageSize: paginationMeta.limit,
                     showSizeChanger: true,
                     total: paginationMeta.total,
-                    showTotal: (total, range) => { return (<div> {range[0]}-{range[1]} trên {total} rows</div>) }
+                    showTotal: (total, range) => {return <div>{range[0]}–{range[1]} trên {total} giáo viên</div> }
                 }}
                 onChange={onChange}
             />

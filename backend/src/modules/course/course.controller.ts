@@ -1,8 +1,9 @@
-import { Body, Controller, Delete, Get, Param, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Query, UseGuards } from '@nestjs/common';
 import { CourseService } from './course.service';
 import { CreateCourseDto } from './dto/create-course.dto';
 import { RoleGuard } from '../auth/guards/role.guard';
 import { JwtGuard } from '../auth/guards/jwt.guard';
+import { FilterCourseDto } from './dto/filter-course.dto';
 
 @Controller('course')
 export class CourseController {
@@ -18,8 +19,8 @@ export class CourseController {
   @UseGuards(new RoleGuard(['admin', 'teacher']))
   @UseGuards(JwtGuard)
   @Get('all')
-  async getAllCourse() {
-    return await this.courseService.findAll();
+  async getAllCourse(@Query() filterCourseDto: FilterCourseDto) {
+    return await this.courseService.findAll(filterCourseDto);
   }
   
   @Get('one/:id')

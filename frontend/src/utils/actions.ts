@@ -163,3 +163,46 @@ export const handleDeleteClassAction = async (id: any) => {
     revalidateTag("list-classes")
     return res;
 }
+
+export const handleCreateCourseAction = async (data: any) => {
+    const session = await auth();
+    const res = await sendRequest<IBackendRes<any>>({
+        url: `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/course/create`,
+        method: "POST",
+        headers: {
+            Authorization: `Bearer ${session?.user?.accessToken}`,
+        },
+        body: { ...data }
+    })
+    console.log(res)
+    revalidateTag("list-courses")
+    return res;
+}
+
+export const handleDetailCourseAction = async (id: any) => {
+    const session = await auth();
+    const res = await sendRequest<IBackendRes<any>>({
+        url: `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/course/one/${id}`,
+        method: "GET",
+        headers: {
+            Authorization: `Bearer ${session?.user?.accessToken}`,
+        },
+    })
+
+    revalidateTag("list-courses")
+    return res;
+}
+
+export const handleDeleteCourseAction = async (id: any) => {
+    const session = await auth();
+    const res = await sendRequest<IBackendRes<any>>({
+        url: `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/course/delete/${id}`,
+        method: "DELETE",
+        headers: {
+            Authorization: `Bearer ${session?.user?.accessToken}`,
+        },
+    })
+
+    revalidateTag("list-courses")
+    return res;
+}
