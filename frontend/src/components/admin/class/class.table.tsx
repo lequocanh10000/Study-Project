@@ -59,12 +59,22 @@ const ClassTable = (props: IProps) => {
             dataIndex: 'learningForm',
         },
         {
+            title: 'Ngày học trong tuần',
+            dataIndex: 'learningDays',
+            render: (days: string[]) => days?.join(', ')
+        },
+        {
             title: 'Phòng học',
             dataIndex: 'classRoom',
         },
         {
             title: 'Mã khóa học',
             dataIndex: 'courseId',
+        },
+        {
+            title: 'Trạng thái lớp',
+            dataIndex: 'isOpened',
+            render: (isOpened: boolean) => isOpened ? 'Đã mở' : 'Đã đóng',
         },
         {
             title: 'Actions',
@@ -87,12 +97,14 @@ const ClassTable = (props: IProps) => {
                         <Popconfirm
                             placement="leftTop"
                             title={"Xác nhận xóa lớp"}
-                            description={"Bạn có chắc chắn muốn xóa lớp này ?"}
+                            description={"Bạn có chắc chắn muốn đóng lớp này ?"}
                             onConfirm={async () => {
                                 const res = await handleDeleteClassAction(record?.id)
                                 if (res.statusCode === 403) {
-                                    notification.error({ message: 'Bạn không thể xóa lớp học' })
+                                    notification.error({ message: 'Bạn không thể đóng lớp học' })
                                     return
+                                } else {
+                                    notification.success({message: 'Đóng lớp thành công'})
                                 }
                             }}
                             okText="Xác nhận"
@@ -134,7 +146,7 @@ const ClassTable = (props: IProps) => {
                 alignItems: "center",
                 marginBottom: 20
             }}>
-                <span>Quản lý học sinh</span>
+                <span>Quản lý lớp học</span>
                 <Button onClick={() => setIsCreateModalOpen(true)}>Tạo mới</Button>
             </div>
             <Input.Search

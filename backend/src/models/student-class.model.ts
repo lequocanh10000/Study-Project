@@ -24,7 +24,7 @@ export class StudentClass extends Model<StudentClass> {
         type: DataType.BOOLEAN,
         defaultValue: false,
     })
-    isExpelled: Boolean;
+    isAbsent: Boolean;
 
     @Column({
         type: DataType.FLOAT,

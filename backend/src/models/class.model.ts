@@ -9,6 +9,15 @@ export enum LearningForms {
     OFFLINE = 'Offline'
 }
 
+export enum LearningDays {
+    MONDAY = 'Monday',
+    TUESDAY = 'Tuesday',
+    WEDNESDAY = 'Wednesday',
+    THURSAY = 'Thursday',
+    FRIDAY = 'Friday',
+    SATURDAY = 'Saturday'
+}
+
 @Table
 export class Class extends Model<Class> {
     @Column({
@@ -28,6 +37,12 @@ export class Class extends Model<Class> {
         type: DataType.ENUM(...Object.keys(LearningForms))
     })
     learningForm: LearningForms;
+
+    @Column({
+        allowNull: false,
+        type: DataType.JSON
+    })
+    learningDays: LearningDays[];
 
     @Column({
         allowNull: false,

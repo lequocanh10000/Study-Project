@@ -42,7 +42,7 @@ const ClassDetail = ({ classData, isDetailModalOpen, setIsDetailModalOpen }: IPr
                     <Descriptions.Item label="Ngày khai giảng">{classData.openingDate}</Descriptions.Item>
                     <Descriptions.Item label="Hình thức học">{classData.learningForm}</Descriptions.Item>
                     <Descriptions.Item label="Phòng học">{classData.classRoom}</Descriptions.Item>
-                    <Descriptions.Item label="Trạng thái mở lớp">
+                    <Descriptions.Item label="Trạng thái lớp học">
                         {classData.isOpened ? (
                             <Tag color="green">Đang mở</Tag>
                         ) : (
