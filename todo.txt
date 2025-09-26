@@ -1,0 +1,7 @@
+Quản lý lớp học
+List ra thêm danh sách sinh viên trong lớp học và trạng thái của sinh viên (Online, offline)
+ Ngày khai giảng, ngày kết thúc, lịch giảng dạy(lưu JSON), trạng thái hoạt động, 
+Tìm kiếm theo giáo viên, đang mở lớp, thứ, giờ
+Mỗi lần gv vào lớp thì sẽ cập nhật trạng thái lớp học đang đảm nhiệm (đang dạy, off)
+Cập nhật danh sách sinh viên trong lớp mà gv đảm nhiệm(vắng mặt, đang học)
+  
