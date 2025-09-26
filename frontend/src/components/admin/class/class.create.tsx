@@ -28,10 +28,10 @@ const ClassCreate = (props: IProps) => {
         const res = await handleCreateClassAction(values);
         if (res?.statusCode === 201) {
             handleCloseCreateModal();
-            message.success(`Tạo học sinh thành công`)
+            message.success(res.message)
         } else {
             notification.error({
-                message: "Tạo học sinh thất bại",
+                message: "Tạo lớp học thất bại",
                 description: res?.message
             })
         }
@@ -61,7 +61,7 @@ const ClassCreate = (props: IProps) => {
                                 { required: true, message: 'Vui lòng id khóa học' },
                             ]}
                         >
-                            <Input type="number"/>
+                            <Input type="number" />
                         </Form.Item>
                     </Col>
 
@@ -75,6 +75,7 @@ const ClassCreate = (props: IProps) => {
                         </Form.Item>
                     </Col>
 
+
                     <Col span={24}>
                         <Form.Item
                             label="Ngày khai giảng"
@@ -87,13 +88,31 @@ const ClassCreate = (props: IProps) => {
 
                     <Col span={24}>
                         <Form.Item
+                            label="Các ngày học trong tuần"
+                            name="learningDays"
+                            rules={[{ required: true, message: 'Vui lòng chọn các ngày học' }]}
+                        >
+                            <Select mode="multiple" placeholder="Chọn các ngày học">
+                                <Select.Option value="T2">Thứ Hai</Select.Option>
+                                <Select.Option value="T3">Thứ Ba</Select.Option>
+                                <Select.Option value="T4">Thứ Tư</Select.Option>
+                                <Select.Option value="T5">Thứ Năm</Select.Option>
+                                <Select.Option value="T6">Thứ Sáu</Select.Option>
+                                <Select.Option value="T7">Thứ Bảy</Select.Option>
+                            </Select>
+                        </Form.Item>
+                    </Col>
+
+
+                    <Col span={24}>
+                        <Form.Item
                             label="Phòng học"
                             name="classRoom"
                             rules={[
                                 { required: true, message: 'Vui lòng phòng học' },
                             ]}
                         >
-                            <Input/>
+                            <Input />
                         </Form.Item>
                     </Col>
 

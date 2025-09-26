@@ -153,8 +153,36 @@ export const handleDetailClassAction = async (id: any) => {
 export const handleDeleteClassAction = async (id: any) => {
     const session = await auth();
     const res = await sendRequest<IBackendRes<any>>({
-        url: `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/class/soft/${id}`,
+        url: `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/class/hard/${id}`,
         method: "DELETE",
+        headers: {
+            Authorization: `Bearer ${session?.user?.accessToken}`,
+        },
+    })
+
+    revalidateTag("list-classes")
+    return res;
+}
+
+export const handleOpenClassAction = async (id: any) => {
+    const session = await auth();
+    const res = await sendRequest<IBackendRes<any>>({
+        url: `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/class/open/${id}`,
+        method: "PATCH",
+        headers: {
+            Authorization: `Bearer ${session?.user?.accessToken}`,
+        },
+    })
+
+    revalidateTag("list-classes")
+    return res;
+}
+
+export const handleCloseClassAction = async (id: any) => {
+    const session = await auth();
+    const res = await sendRequest<IBackendRes<any>>({
+        url: `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/class/close/${id}`,
+        method: "PATCH",
         headers: {
             Authorization: `Bearer ${session?.user?.accessToken}`,
         },

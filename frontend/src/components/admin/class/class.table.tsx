@@ -1,7 +1,7 @@
 'use client'
-import { handleDetailClassAction, handleDeleteClassAction } from "@/utils/actions";
-import { DeleteTwoTone, EyeTwoTone } from "@ant-design/icons";
-import { Button, Input, notification, Popconfirm, Table, TablePaginationConfig, TableProps } from "antd"
+import { handleDetailClassAction, handleDeleteClassAction, handleCloseClassAction, handleOpenClassAction } from "@/utils/actions";
+import { DeleteTwoTone, EyeTwoTone, PoweroffOutlined } from "@ant-design/icons";
+import { Button, Checkbox, Input, notification, Popconfirm, Table, TablePaginationConfig, TableProps, Tag } from "antd"
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useState } from "react";
 import ClassCreate from "./class.create";
@@ -32,6 +32,8 @@ const ClassTable = (props: IProps) => {
     const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
     const [detailData, setDetailData] = useState<any>(null);
 
+    const [selectedDays, setSelectedDays] = useState<string[]>([]);
+    const [popoverVisible, setPopoverVisible] = useState(false);
 
     const columns = [
         {
@@ -74,7 +76,7 @@ const ClassTable = (props: IProps) => {
         {
             title: 'Trạng thái lớp',
             dataIndex: 'isOpened',
-            render: (isOpened: boolean) => isOpened ? 'Đã mở' : 'Đã đóng',
+            render: (isOpened: boolean) => isOpened ? <Tag color="green">Đã mở</Tag> : <Tag color="red">Đã đóng</Tag>,
         },
         {
             title: 'Actions',
@@ -97,14 +99,14 @@ const ClassTable = (props: IProps) => {
                         <Popconfirm
                             placement="leftTop"
                             title={"Xác nhận xóa lớp"}
-                            description={"Bạn có chắc chắn muốn đóng lớp này ?"}
+                            description={"Bạn có chắc chắn muốn xóa lớp này ?"}
                             onConfirm={async () => {
                                 const res = await handleDeleteClassAction(record?.id)
                                 if (res.statusCode === 403) {
-                                    notification.error({ message: 'Bạn không thể đóng lớp học' })
+                                    notification.error({ message: 'Bạn không thể xóa lớp học' })
                                     return
                                 } else {
-                                    notification.success({message: 'Đóng lớp thành công'})
+                                    notification.success({ message: 'Xóa lớp thành công' })
                                 }
                             }}
                             okText="Xác nhận"
@@ -114,6 +116,19 @@ const ClassTable = (props: IProps) => {
                                 <DeleteTwoTone twoToneColor="#ff4d4f" />
                             </span>
                         </Popconfirm>
+
+                        <PoweroffOutlined
+                            twoToneColor="#f57800"
+                            onClick={async () => {
+                                const res = record?.isOpened ? await handleCloseClassAction(record?.id) : await handleOpenClassAction(record?.id)
+                                if (res.statusCode === 403) {
+                                    notification.error({ message: 'Bạn không thể đóng/mở lớp này' })
+                                    return
+                                } else {
+                                    notification.success({ message: res.message })
+                                }
+                            }}
+                        />
                     </>
                 )
             }
@@ -130,13 +145,26 @@ const ClassTable = (props: IProps) => {
 
     const onSearch = (value: string) => {
         const params = new URLSearchParams(searchParams as any);
-        if(value) {
+        if (value) {
             params.set('search', value)
         } else {
             params.delete('search')
         }
         replace(`${pathname}?${params.toString()}`);
     }
+
+
+    const onLearningDaysChange = (selectedDays: string[]) => {
+        const params = new URLSearchParams(searchParams as any);
+        if (selectedDays.length > 0) {
+            params.set('learningDays', JSON.stringify(selectedDays));
+        } else {
+            params.delete('learningDays');
+        }
+        replace(`${pathname}?${params.toString()}`);
+        setPopoverVisible(false);
+    };
+
 
 
     return (
@@ -149,12 +177,38 @@ const ClassTable = (props: IProps) => {
                 <span>Quản lý lớp học</span>
                 <Button onClick={() => setIsCreateModalOpen(true)}>Tạo mới</Button>
             </div>
-            <Input.Search
-                placeholder="Nhập tên phòng học tại đây"
-                allowClear
-                onSearch={onSearch}
-                style={{ width: 300 }}
-            />
+            <div style={{ display: "flex", gap: 10, marginBottom: 20 }}>
+                <Input.Search
+                    placeholder="Nhập tên phòng học tại đây"
+                    allowClear
+                    onSearch={onSearch}
+                    style={{ width: 300 }}
+                />
+
+                <Popconfirm
+                    title="Chọn ngày"
+                    okText="Lọc"
+                    cancelText="Hủy"
+                    description={
+                        <Checkbox.Group
+                            value={selectedDays}
+                            onChange={(checkedValues) => setSelectedDays(checkedValues as string[])}
+                            options={[
+                                { label: 'Thứ Hai', value: 'T2' },
+                                { label: 'Thứ Ba', value: 'T3' },
+                                { label: 'Thứ Tư', value: 'T4' },
+                                { label: 'Thứ Năm', value: 'T5' },
+                                { label: 'Thứ Sáu', value: 'T6' },
+                                { label: 'Thứ Bảy', value: 'T7' },
+                            ]}
+                        />
+                    }
+                >
+                    <Button onClick={() => onLearningDaysChange(selectedDays)}>Lọc ngày trong tuần</Button>
+
+                </Popconfirm>
+            </div>
+
             <Table
                 bordered
                 dataSource={items}

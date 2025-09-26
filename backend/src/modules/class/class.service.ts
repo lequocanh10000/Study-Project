@@ -5,7 +5,7 @@ import { CourseService } from '../course/course.service';
 import { InjectModel } from '@nestjs/sequelize';
 import { Class, Course, StudentClass, TeacherClass } from 'src/models';
 import { FilterClassDto } from './dto/filter-class.dto';
-import { Op } from 'sequelize';
+import { literal, Op } from 'sequelize';
 import { ConfigService } from '@nestjs/config';
 
 @Injectable()
@@ -83,6 +83,7 @@ export class ClassService {
             search,
             isOpened,
             courseId,
+            learningDays,
             page,
             limit,
             sortBy,
@@ -97,6 +98,14 @@ export class ClassService {
                 { classRoom: { [Op.like]: `%${search}%` } },
             ];
         }
+
+        if (learningDays && Array.isArray(learningDays) && learningDays.length > 0) {
+            const jsonArray = JSON.stringify(learningDays);
+            whereClause[Op.and] = [
+                literal(`JSON_CONTAINS(Class.learningDays, '${jsonArray}')`)
+            ];
+        }
+
 
         if (isOpened !== undefined) whereClause.isOpened = isOpened;
         if (courseId !== undefined) whereClause.courseId = courseId;
@@ -146,12 +155,21 @@ export class ClassService {
         return { message: 'Xóa lớp thành công' };
     }
 
-    async removeSoft(id: number, account) {
+    async close(id: number, account) {
         await this.checkPermission(id, account);
         await this.classModel.update(
             { isOpened: false },
             { where: { id } }
         );
         return { message: 'Đóng lớp thành công' };
+    }
+
+    async open(id: number, account) {
+        await this.checkPermission(id, account);
+        await this.classModel.update(
+            { isOpened: true },
+            { where: { id } }
+        );
+        return { message: 'Mở lớp thành công' };
     }
 }

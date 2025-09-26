@@ -12,16 +12,16 @@ export const courses = [
 ];
 
 export const classes = [
-  { courseId: 1, maxNumber: 25, openingDate: "2025-09-01", learningForm: "Offline", learningDays: ['Monday', 'Tuesday'], classRoom: "A101", isOpened: true },
-  { courseId: 2, maxNumber: 20, openingDate: "2025-09-05", learningForm: "Online", learningDays: ['Monday', 'Wednesday'], classRoom: "Virtual01", isOpened: true },
-  { courseId: 3, maxNumber: 30, openingDate: "2025-09-10", learningForm: "Offline", learningDays: ['Tuesday', 'Wednesday'], classRoom: "B202", isOpened: true },
-  { courseId: 1, maxNumber: 18, openingDate: "2025-09-15", learningForm: "Online", learningDays: ['Tuesday', 'Thursday'], classRoom: "Virtual02", isOpened: true },
-  { courseId: 2, maxNumber: 22, openingDate: "2025-09-20", learningForm: "Offline", learningDays: ['Monday', 'Friday'], classRoom: "C303", isOpened: true },
-  { courseId: 3, maxNumber: 25, openingDate: "2025-09-25", learningForm: "Online", learningDays: ['Tuesday', 'Friday'], classRoom: "Virtual03", isOpened: true },
-  { courseId: 1, maxNumber: 20, openingDate: "2025-10-01", learningForm: "Offline", learningDays: ['Thursday', 'Saturday'], classRoom: "D404", isOpened: false },
-  { courseId: 2, maxNumber: 15, openingDate: "2025-10-05", learningForm: "Online", learningDays: ['Wednesday', 'Friday'],classRoom: "Virtual04", isOpened: true },
-  { courseId: 3, maxNumber: 28, openingDate: "2025-10-10", learningForm: "Offline", learningDays: ['Monday', 'Thursday'], classRoom: "E505", isOpened: true },
-  { courseId: 1, maxNumber: 24, openingDate: "2025-10-15", learningForm: "Online", learningDays: ['Wednesday', 'Saturday'], classRoom: "Virtual05", isOpened: false },
+  { courseId: 1, maxNumber: 25, openingDate: "2025-09-01", learningForm: "Offline", learningDays: ['T2', 'T3'], classRoom: "A101", isOpened: true },
+  { courseId: 2, maxNumber: 20, openingDate: "2025-09-05", learningForm: "Online", learningDays: ['T2', 'T4'], classRoom: "Virtual01", isOpened: true },
+  { courseId: 3, maxNumber: 30, openingDate: "2025-09-10", learningForm: "Offline", learningDays: ['T3', 'T4'], classRoom: "B202", isOpened: true },
+  { courseId: 1, maxNumber: 18, openingDate: "2025-09-15", learningForm: "Online", learningDays: ['T3', 'T5'], classRoom: "Virtual02", isOpened: true },
+  { courseId: 2, maxNumber: 22, openingDate: "2025-09-20", learningForm: "Offline", learningDays: ['T2', 'T6'], classRoom: "C303", isOpened: true },
+  { courseId: 3, maxNumber: 25, openingDate: "2025-09-25", learningForm: "Online", learningDays: ['T3', 'T6'], classRoom: "Virtual03", isOpened: true },
+  { courseId: 1, maxNumber: 20, openingDate: "2025-10-01", learningForm: "Offline", learningDays: ['T5', 'T7'], classRoom: "D404", isOpened: false },
+  { courseId: 2, maxNumber: 15, openingDate: "2025-10-05", learningForm: "Online", learningDays: ['T4', 'T6'],classRoom: "Virtual04", isOpened: true },
+  { courseId: 3, maxNumber: 28, openingDate: "2025-10-10", learningForm: "Offline", learningDays: ['T2', 'T5'], classRoom: "E505", isOpened: true },
+  { courseId: 1, maxNumber: 24, openingDate: "2025-10-15", learningForm: "Online", learningDays: ['T4', 'T7'], classRoom: "Virtual05", isOpened: false },
 ];
 
 export const document_classes = [

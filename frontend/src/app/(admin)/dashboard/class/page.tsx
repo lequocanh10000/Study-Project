@@ -11,6 +11,7 @@ const ManageClassPage = async (props: IProps) => {
     const page = props?.searchParams?.page ?? 1;
     const limit = props?.searchParams?.limit ?? 10;
     const search = props?.searchParams?.search ?? "";
+    const learningDays = props?.searchParams?.learningDays ?? [];
     const session = await auth();
 
     const res = await sendRequest<any>({
@@ -22,7 +23,8 @@ const ManageClassPage = async (props: IProps) => {
         queryParams: {
             page,
             limit,
-            search
+            search,
+            learningDays
         },
         nextOption: {
             next: { tags: ['list-classes'] }

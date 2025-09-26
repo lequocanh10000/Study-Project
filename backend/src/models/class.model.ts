@@ -10,12 +10,12 @@ export enum LearningForms {
 }
 
 export enum LearningDays {
-    MONDAY = 'Monday',
-    TUESDAY = 'Tuesday',
-    WEDNESDAY = 'Wednesday',
-    THURSAY = 'Thursday',
-    FRIDAY = 'Friday',
-    SATURDAY = 'Saturday'
+    MONDAY = 'T2',
+    TUESDAY = 'T3',
+    WEDNESDAY = 'T4',
+    THURSAY = 'T5',
+    FRIDAY = 'T6',
+    SATURDAY = 'T7'
 }
 
 @Table

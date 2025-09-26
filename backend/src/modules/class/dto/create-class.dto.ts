@@ -1,5 +1,6 @@
-import { BooleanNotRequired, DateRequired, EnumRequired, NumberRequired, StringRequired } from "src/common/decorators";
+import { ArrayEnumRequired, BooleanNotRequired, DateRequired, EnumRequired, NumberRequired, StringRequired } from "src/common/decorators";
 import { LearningForms } from "src/models";
+import { LearningDays } from "src/models/class.model";
 
 export class CreateClassDto {
     @NumberRequired('Số lượng học sinh tối đa', 1)
@@ -10,6 +11,9 @@ export class CreateClassDto {
 
     @EnumRequired(LearningForms, 'Hình thức học')
     learningForm: LearningForms;
+
+    @ArrayEnumRequired(LearningDays, 'Các ngày học trong tuần')
+    learningDays: LearningDays;
 
     @StringRequired('Phòng học')
     classRoom: string;

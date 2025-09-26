@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
 import { ClassService } from './class.service';
 import { CreateClassDto } from './dto/create-class.dto';
 import { FilterClassDto } from './dto/filter-class.dto';
@@ -34,9 +34,16 @@ export class ClassController {
 
   @UseGuards(new RoleGuard(['admin', 'teacher']))
   @UseGuards(JwtGuard)
-  @Delete('soft/:id')
-  async removeSoft(@Param('id') id: number, @CurrentInfo() account) {
-    return this.classService.removeSoft(id, account);
+  @Patch('open/:id')
+  async open(@Param('id') id: number, @CurrentInfo() account) {
+    return this.classService.open(id, account);
+  }
+
+  @UseGuards(new RoleGuard(['admin', 'teacher']))
+  @UseGuards(JwtGuard)
+  @Patch('close/:id')
+  async close(@Param('id') id: number, @CurrentInfo() account) {
+    return this.classService.close(id, account);
   }
 
   @UseGuards(new RoleGuard(['admin']))

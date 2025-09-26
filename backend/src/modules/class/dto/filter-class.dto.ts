@@ -1,4 +1,5 @@
-import { BooleanNotRequired, DateNotRequired, NumberNotRequired, StringNotRequired } from "src/common/decorators";
+import {  ArrayEnumNotRequired, BooleanNotRequired, DateNotRequired, NumberNotRequired, StringNotRequired } from "src/common/decorators";
+import { LearningDays } from "src/models/class.model";
 
 export class FilterClassDto {
     @StringNotRequired()
@@ -9,6 +10,9 @@ export class FilterClassDto {
 
     @NumberNotRequired('Mã khóa học')
     courseId?: number;
+
+    @ArrayEnumNotRequired(LearningDays, 'Ngày học trong tuần')
+    learningDays?: LearningDays;
 
     @NumberNotRequired('Trang')
     page?: number;
