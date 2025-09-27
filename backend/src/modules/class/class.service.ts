@@ -3,7 +3,7 @@ import { CreateClassDto } from './dto/create-class.dto';
 import { Sequelize } from 'sequelize-typescript';
 import { CourseService } from '../course/course.service';
 import { InjectModel } from '@nestjs/sequelize';
-import { Class, Course, StudentClass, TeacherClass } from 'src/models';
+import { Class, Course, Student, StudentClass, TeacherClass } from 'src/models';
 import { FilterClassDto } from './dto/filter-class.dto';
 import { literal, Op } from 'sequelize';
 import { ConfigService } from '@nestjs/config';
@@ -16,6 +16,7 @@ export class ClassService {
         private readonly courseService: CourseService,
         @InjectModel(Class) private readonly classModel: typeof Class,
         @InjectModel(TeacherClass) private readonly teacherClassModel: typeof TeacherClass,
+        @InjectModel(StudentClass) private readonly studentClassModel: typeof StudentClass,
     ) { }
 
     private async checkPermission(id: number, account) {
@@ -147,6 +148,66 @@ export class ClassService {
         };
     }
 
+    async studentClassDetail(filterClasssDto: FilterClassDto, id: number, account) {
+        await this.checkPermission(id, account)
+        const {
+            search,
+            isAbsent,
+            page,
+            limit,
+            sortBy,
+            sortOrder,
+        } = filterClasssDto;
+
+        const whereClause: any = {}
+        whereClause.classId = id
+        if (search !== undefined) {
+            whereClause[Op.or] = [
+                { fullName: { [Op.like]: `%${search}%` } },
+            ];
+        }
+
+
+        const limitPage = Number(limit || this.configService.get<number>('LIMIT_CLASS'));
+        const currentPage = Number(page || 1);
+        const offset = (currentPage - 1) * limitPage;
+
+        let orderClause: any[] = [];
+        if (sortBy && sortOrder) {
+            orderClause = [[sortBy, sortOrder]];
+        } else {
+            orderClause = [[this.sequelize.literal("SUBSTRING_INDEX(fullName, ' ', -1)"), "ASC"]];
+        }
+
+        const { rows, count } = await this.studentClassModel.findAndCountAll({
+            where: whereClause,
+            order: orderClause,
+            limit: limitPage,
+            offset,
+            include: [
+                {
+                    model: Student,
+                    attributes: ['fullName', 'dob']
+                },
+            ],
+            attributes: {
+                exclude: ['createdAt', 'updatedAt', 'classId']
+            },
+            raw: true
+        });
+        const totalItems = Array.isArray(count) ? count.length : count;
+
+        return {
+            items: rows,
+            paginationMeta: {
+                current: currentPage,
+                limit: limitPage,
+                pages: Math.ceil(totalItems / limitPage),
+                total: totalItems
+            }
+        };
+    }
+
     async removeHard(id: number) {
         await this.classModel.destroy({
             where: { id },
@@ -161,6 +222,10 @@ export class ClassService {
             { isOpened: false },
             { where: { id } }
         );
+        await this.studentClassModel.update(
+            { isAbsent: true },
+            { where: { classId: id } },
+        );
         return { message: 'Đóng lớp thành công' };
     }
 
@@ -171,5 +236,17 @@ export class ClassService {
             { where: { id } }
         );
         return { message: 'Mở lớp thành công' };
+    }
+
+    async call(classId: number, studentId: number) {
+        await this.studentClassModel.update(
+            { isAbsent: false },
+            {
+                where: {
+                    classId, studentId
+                }
+            }
+        );
+        return { message: 'Điểm danh thành công' };
     }
 }

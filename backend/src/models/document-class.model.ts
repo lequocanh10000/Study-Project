@@ -1,4 +1,4 @@
-import { Column, DataType, ForeignKey, Model, Table } from "sequelize-typescript";
+import { BelongsTo, Column, DataType, ForeignKey, Model, Table } from "sequelize-typescript";
 import { Class } from "./class.model";
 import { Document } from "./document.model";
 
@@ -19,4 +19,11 @@ export class DocumentClass extends Model<DocumentClass> {
         type: DataType.INTEGER,
     })
     documentId: number
+
+    // Relationships
+    @BelongsTo(() => Document)
+    document: Document
+
+    @BelongsTo(() => Class)
+    class: Class;
 }

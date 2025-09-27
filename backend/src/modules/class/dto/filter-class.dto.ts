@@ -8,6 +8,9 @@ export class FilterClassDto {
     @BooleanNotRequired()
     isOpened?: boolean;
 
+    @BooleanNotRequired()
+    isAbsent?: boolean;
+
     @NumberNotRequired('Mã khóa học')
     courseId?: number;
 

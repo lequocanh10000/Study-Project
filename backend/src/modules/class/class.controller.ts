@@ -52,4 +52,19 @@ export class ClassController {
   async removeHard(@Param('id') id: number) {
     return this.classService.removeHard(id);
   }
+
+  @UseGuards(new RoleGuard(['admin', 'teacher']))
+  @UseGuards(JwtGuard)
+  @Get(':classId/students')
+  async studentClassDetail(@Param('classId') classId: number, @CurrentInfo() account, @Query() filterClassDto: FilterClassDto) {
+    console.log(account);
+    return await this.classService.studentClassDetail(filterClassDto, classId, account, );
+  }
+
+  @UseGuards(new RoleGuard(['admin', 'teacher']))
+  @UseGuards(JwtGuard)
+  @Patch(':classId/students/call/:studentId')
+  async call(@Param('classId') classId: number, @Param('studentId') studentId: number) {
+    return this.classService.call(classId, studentId);
+  }
 }
